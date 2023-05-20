@@ -1,0 +1,36 @@
+#include "shell.h"
+
+/**
+ * main - is function to test and receive and give input and output;
+ * @argc: number of arguments pass the program;
+ * @argv: is an array of arguments pass the program;
+ *
+ * Return: value 0 for success;
+ */
+int main(int argc, char *argv[])
+{
+        char *env;
+
+        if (argc < 2)
+        {
+                printf("Usage: %s filename ...\n", argv[0]);
+                return (1);
+        }
+
+	if (strcmp(argv[1], "printenv") == 0)
+	{
+		_printenv();
+	}
+
+	if (strcmp(argv[1], "which") == 0)
+	{
+		env = _which(argv[2]);
+		if (env != NULL)
+		{
+			printf("%s\n", env);
+			free(env);
+		}
+	}
+
+        return (0);
+}
