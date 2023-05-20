@@ -76,7 +76,7 @@ int main(void)
 	return (0);
 }
 
-void _execve(char *line)
+void **cmd_args(char *line)
 {
 	char **argv;
 	char *cmd, *str, *token, *delim = " \n";
