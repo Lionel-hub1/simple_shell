@@ -49,7 +49,7 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 int main(void)
 {
 	char *line = NULL;
-	size_t len = 0;
+	size_t len = SIZE;
 	int line_size;
 
 	while (1)
@@ -58,9 +58,10 @@ int main(void)
 		line_size = _getline(&line, &len, stdin);
 		if (line_size == -1)
 		{
-			perror("getline");
-			exit(1);
+			printf("\n");
+			exit(0);
 		}
+
 		if (strcmp(line, "exit\n") == 0)
 			return (0);
 
@@ -68,7 +69,8 @@ int main(void)
 			_printenv();
 		else
 		{
-			_execve(line);
+			if (strcmp(line, "\n") != 0)
+				_execve(line);
 		}
 	}
 	free(line);
@@ -76,30 +78,27 @@ int main(void)
 	return (0);
 }
 
-void **cmd_args(char *line)
+void _execve(char *line)
 {
 	char **argv;
 	char *cmd, *str, *token, *delim = " \n";
-	int i = 0, len;
+	int i = 0, len, x = 0;
 
 	if (line == NULL)
 		return;
 
 	argv = malloc(SIZE * sizeof(char *));
-	if (argv == NULL)
+	cmd = malloc(SIZE);
+	str = malloc(SIZE);
+	token = malloc(SIZE);
+	if (argv == NULL || cmd == NULL || str == NULL ||
+			token == NULL)
 		return;
 
 	str = strdup(line);
 	if (str != NULL)
 	{
 		token = strtok(str, delim);
-		cmd = _which(token);
-		if (cmd == NULL)
-			cmd = token;
-		len = strlen(cmd) + 1;
-		argv[i] = malloc(len * sizeof(char));
-		snprintf(argv[i], len, "%s", cmd);
-		i++;
 		while (token)
 		{
 			len = strlen(token) + 1;
@@ -108,6 +107,7 @@ void **cmd_args(char *line)
 			i++;
 			token = strtok(NULL, delim);
 		}
+		argv[i] = NULL;
 	}
 
 	if (argv[0] == NULL)
@@ -116,11 +116,36 @@ void **cmd_args(char *line)
 		free(argv);
 		return;
 	}
-	execve(argv[0], argv, NULL);
+
+	if (argv[0] != NULL)
+	{
+		cmd = _which(argv[0]);
+		if (cmd != NULL)
+		{
+			len = strlen(cmd) + 1;
+			argv[0] = realloc(argv[0], len);
+			snprintf(argv[0], len, "%s", cmd);
+		}
+	}
+	if (argv != NULL)
+	{
+		while (argv[x])
+		{
+			printf("%s\n", argv[x]);
+			x++;
+		}
+		return;
+	}
+
 	if (execve(argv[0], argv, NULL) != 0)
 	{
 		printf("%s: command not found\n", argv[0]);
 		free(str);
+		while (i <= 0)
+		{
+			free(argv[i]);
+			i--;
+		}
 		free(argv);
 		return;
 	}
