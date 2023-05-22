@@ -1,5 +1,14 @@
 #include "shell.h"
 
+/**
+ * _getline - Reads a line from a stream and stores it in a buffer.
+ * @lineptr: Pointer to the buffer that will store the line.
+ * @n: Pointer to the size of the buffer.
+ * @stream: The input stream to read from.
+ *
+ * Return: The number of characters read (including the newline character),
+ *         -1 on failure or end-of-file condition.
+ */
 ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 {
 	char *newline, *line = *lineptr;
@@ -50,6 +59,12 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 	return (i);
 }
 
+/**
+ * cmdtoargv - Converts a command string to an argument vector.
+ * @line: The command string to be converted.
+ *
+ * Return: The argument vector.
+ */
 char **cmdtoargv(char *line)
 {
 	char **argv;
@@ -89,6 +104,12 @@ char **cmdtoargv(char *line)
 	return (argv);
 }
 
+/**
+ * _execve - Executes a command by forking a new process.
+ * @argv: The argument vector containing the command and its arguments.
+ *
+ * Return: void.
+ */
 void _execve(char **argv)
 {
 	pid_t pid;
@@ -123,6 +144,11 @@ void _execve(char **argv)
 		wait(NULL);
 }
 
+/**
+ * _clear - Clears the screen.
+ *
+ * Return: void.
+ */
 void _clear(void)
 {
 	printf("\033c");
