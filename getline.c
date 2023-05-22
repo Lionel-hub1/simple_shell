@@ -2,41 +2,45 @@
 
 ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 {
-	char *new_line, *line = *lineptr;
+	char *newline, *line = *lineptr;
 	size_t size = *n;
-	int c;
+	int ch;
 	size_t i = 0;
 
-	/* Allocate a buffer if one has not already been allocated*/
+	/* To allocate memory for buffer if have not allocated */
 	if (line == NULL)
 	{
-		size = INITIAL_SIZE;
+		size = SIZE;
 		line = malloc(size);
 		if (line == NULL)
 			return (-1);
 	}
 
-	while ((c = fgetc(stream)) != EOF)
+	while ((ch = fgetc(stream)) != EOF)
 	{
 		if (i + 1 == size)
 		{
-			/* Double the buffer size*/
+			/* to double the buffer size for line*/
 			size *= 2;
-			new_line = realloc(line, size);
-			if (new_line == NULL)
+			newline = realloc(line, size);
+
+			if (newline == NULL)
 				return (-1);
-			line = new_line;
-			free (new_line);
+
+			line = newline;
+			free(newline);
 		}
-		line[i++] = (char)c;
-		if (c == '\n')
+
+		line[i++] = (char)ch;
+
+		if (ch == '\n')
 			break;
 	}
 
 	if (i == 0)
 	{
-		/* End-of-file or error occurred */
-		return (-1);
+		/* this control End Of File(EOF) or error occurred */
+		return (-1); /*or by Ctrl + D*/
 	}
 
 	line[i] = '\0';
@@ -51,6 +55,7 @@ int main(void)
 	char *line = NULL;
 	size_t len = SIZE;
 	int line_size;
+	char **argv;
 
 	while (1)
 	{
@@ -67,10 +72,15 @@ int main(void)
 
 		if (strcmp(line, "printenv\n") == 0)
 			_printenv();
+		if (strcmp(line, "clear\n") == 0)
+			_clear();
 		else
 		{
 			if (strcmp(line, "\n") != 0)
-				_execve(line);
+			{
+				argv = cmdtoargv(line);
+				_execve(argv);
+			}
 		}
 	}
 	free(line);
@@ -78,22 +88,21 @@ int main(void)
 	return (0);
 }
 
-void _execve(char *line)
+char **cmdtoargv(char *line)
 {
 	char **argv;
-	char *cmd, *str, *token, *delim = " \n";
-	int i = 0, len, x = 0;
+	char *str, *token, *delim = " \n";
+	int i = 0, len;
 
 	if (line == NULL)
-		return;
+		return (NULL);
 
 	argv = malloc(SIZE * sizeof(char *));
-	cmd = malloc(SIZE);
-	str = malloc(SIZE);
-	token = malloc(SIZE);
-	if (argv == NULL || cmd == NULL || str == NULL ||
-			token == NULL)
-		return;
+	if (argv == NULL)
+	{
+		perror("malloc");
+		return (NULL);
+	}
 
 	str = strdup(line);
 	if (str != NULL)
@@ -103,6 +112,11 @@ void _execve(char *line)
 		{
 			len = strlen(token) + 1;
 			argv[i] = malloc(len * sizeof(char));
+			if (argv[i] == NULL)
+			{
+				perror("malloc");
+				return (NULL);
+			}
 			snprintf(argv[i], len, "%s", token);
 			i++;
 			token = strtok(NULL, delim);
@@ -110,43 +124,44 @@ void _execve(char *line)
 		argv[i] = NULL;
 	}
 
-	if (argv[0] == NULL)
-	{
-		free(str);
-		free(argv);
-		return;
-	}
+	return (argv);
+}
 
-	if (argv[0] != NULL)
-	{
-		cmd = _which(argv[0]);
-		if (cmd != NULL)
-		{
-			len = strlen(cmd) + 1;
-			argv[0] = realloc(argv[0], len);
-			snprintf(argv[0], len, "%s", cmd);
-		}
-	}
-	if (argv != NULL)
-	{
-		while (argv[x])
-		{
-			printf("%s\n", argv[x]);
-			x++;
-		}
-		return;
-	}
+void _execve(char **argv)
+{
+	pid_t pid;
+	int rval, len;
+	char *cmd;
 
-	if (execve(argv[0], argv, NULL) != 0)
+	if (argv == NULL || argv[0] == NULL)
+		return;
+
+	cmd = _which(argv[0]);
+	if (cmd == NULL)
 	{
 		printf("%s: command not found\n", argv[0]);
-		free(str);
-		while (i <= 0)
-		{
-			free(argv[i]);
-			i--;
-		}
-		free(argv);
 		return;
 	}
+
+	len = strlen(cmd) + 1;
+	argv[0] = realloc(argv[0], len);
+	snprintf(argv[0], len, "%s", cmd);
+
+	pid = fork();
+	if (pid == -1)
+		perror("Error");
+
+	if (pid == 0)
+	{
+		rval = execve(argv[0], argv, NULL);
+		if (rval == -1)
+			perror("Error");
+	}
+	else
+		wait(NULL);
+}
+
+void _clear(void)
+{
+	printf("\033c");
 }

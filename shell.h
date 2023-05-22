@@ -16,7 +16,9 @@
 
 /* Getting line handler */
 ssize_t _getline(char **lineptr, size_t *n, FILE *stream);
-void _execve(char *line);
+char **cmdtoargv(char *line);
+void _execve(char **argv);
+void _clear(void);
 
 /* Environment handling prototype */
 extern char **environ;
