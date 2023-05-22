@@ -19,11 +19,11 @@ int main(void)
 		if (line_size == -1)
 		{
 			printf("\n");
-			exit(0);
+			exit_shell();
 		}
 
 		if (strcmp(line, "exit\n") == 0)
-			return (0);
+			exit_shell();
 
 		/* Call _printenv function to print environment variables */
 		if (strcmp(line, "printenv\n") == 0 ||

@@ -19,6 +19,7 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream);
 char **cmdtoargv(char *line);
 void _execve(char **argv);
 void _clear(void);
+void exit_shell(void);
 
 /* Environment handling prototype */
 extern char **environ;
