@@ -75,6 +75,7 @@ void _execve(char **argv)
 		return;
 
 	cmd = _which(argv[0]);
+	/* Task #3 if the command is not found, it shouldn't reach fork */
 	if (cmd == NULL)
 	{
 		printf("%s: command not found\n", argv[0]);
