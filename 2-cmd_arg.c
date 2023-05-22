@@ -1,3 +1,5 @@
+#include "shell.h"
+
 /**
  * cmdtoargv - Converts a command string to an argument vector.
  * @line: The command string to be converted.
