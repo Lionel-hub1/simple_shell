@@ -70,7 +70,8 @@ int main(void)
 		if (strcmp(line, "exit\n") == 0)
 			return (0);
 
-		if (strcmp(line, "printenv\n") == 0)
+		if (strcmp(line, "printenv\n") == 0 ||
+				strcmp(line, "env\n") == 0)
 			_printenv();
 		if (strcmp(line, "clear\n") == 0)
 			_clear();
