@@ -8,10 +8,18 @@
  */
 char *_which(const char *filename)
 {
-	char *filepath = malloc(SIZE);
-	const char *path = _getenv("PATH");
-	char *pathcp = strdup(path);
-	char *dir = strtok(pathcp, ":");
+	char *filepath;
+	const char *path;
+	char *pathcp;
+	char *dir;
+
+	if (access(filename, F_OK) == 0)
+		return strdup(filename);
+
+	filepath = malloc(SIZE);
+	path = _getenv("PATH");
+	pathcp = strdup(path);
+	dir = strtok(pathcp, ":");
 
 	while (dir)
 	{
