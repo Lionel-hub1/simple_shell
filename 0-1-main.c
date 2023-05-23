@@ -22,13 +22,11 @@ int main(void)
 			free(line);
 			exit_shell();
 		}
-
 		if (strcmp(line, "exit\n") == 0)
 		{
 			free(line);
 			exit_shell();
 		}
-
 		/* Call _printenv function to print environment variables */
 		if (strcmp(line, "printenv\n") == 0 ||
 				strcmp(line, "env\n") == 0)

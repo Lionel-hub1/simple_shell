@@ -15,7 +15,6 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 	size_t size = *n;
 	int ch;
 	size_t i = 0;
-
 	/* To allocate memory for buffer if have not allocated */
 	if (line == NULL)
 	{
@@ -24,7 +23,6 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 		if (line == NULL)
 			return (-1);
 	}
-
 	while ((ch = fgetc(stream)) != EOF)
 	{
 		if (i + 1 == size)
@@ -39,19 +37,15 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 			line = newline;
 			free(newline);
 		}
-
 		line[i++] = (char)ch;
-
 		if (ch == '\n')
 			break;
 	}
-
 	if (i == 0)
 	{
 		/* this control End Of File(EOF) or error occurred */
 		return (-1); /*or by Ctrl + D*/
 	}
-
 	line[i] = '\0';
 	*lineptr = line;
 	*n = size;
