@@ -19,11 +19,15 @@ int main(void)
 		if (line_size == -1)
 		{
 			printf("\n");
+			free(line);
 			exit_shell();
 		}
 
 		if (strcmp(line, "exit\n") == 0)
+		{
+			free(line);
 			exit_shell();
+		}
 
 		/* Call _printenv function to print environment variables */
 		if (strcmp(line, "printenv\n") == 0 ||
@@ -39,6 +43,7 @@ int main(void)
 			{
 				argv = cmdtoargv(line);
 				_execve(argv);
+				free(argv);
 			}
 		}
 	}

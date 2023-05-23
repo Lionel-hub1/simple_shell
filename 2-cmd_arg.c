@@ -10,7 +10,7 @@ char **cmdtoargv(char *line)
 {
 	char **argv;
 	char *str, *token, *delim = " \n";
-	int i = 0, len;
+	int i = 0, len, j;
 
 	if (line == NULL)
 		return (NULL);
@@ -33,6 +33,9 @@ char **cmdtoargv(char *line)
 			if (argv[i] == NULL)
 			{
 				perror("malloc");
+				for (j = 0; j < i; j++)
+					free(argv[j]);
+				free(argv);
 				return (NULL);
 			}
 			snprintf(argv[i], len, "%s", token);
@@ -42,5 +45,6 @@ char **cmdtoargv(char *line)
 		argv[i] = NULL;
 	}
 
+	free(str);
 	return (argv);
 }
