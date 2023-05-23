@@ -7,6 +7,5 @@
  */
 void exit_shell(void)
 {
-        printf("\n");
         exit(0);
 }

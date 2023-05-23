@@ -9,11 +9,12 @@
 char *_getenv(const char *name)
 {
 	size_t nlen = strlen(name);
+	char **envir = environ;
 	char *env, *str, *delim = "=";
 
-	while (*environ)
+	while (*envir)
 	{
-		str = strdup(*environ);
+		str = strdup(*envir);
 		env = strtok(str, delim);
 		while (env)
 		{
@@ -25,7 +26,7 @@ char *_getenv(const char *name)
 			env = strtok(NULL, delim);
 		}
 		free(str);
-		environ++;
+		envir++;
 	}
 
 	return (NULL);
