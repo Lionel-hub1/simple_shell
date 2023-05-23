@@ -30,4 +30,7 @@ void _printenv(void);
 int _setenv(const char *name, const char *value, int overwrite);
 int _unsetenv(const char *name);
 
+/* Tokenizing */
+char *custom_strtok(char *str, const char *delimiters);
+
 #endif /* SHELL_H */

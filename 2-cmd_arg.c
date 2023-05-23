@@ -25,7 +25,7 @@ char **cmdtoargv(char *line)
 	str = strdup(line);
 	if (str != NULL)
 	{
-		token = strtok(str, delim);
+		token = custom_strtok(str, delim);
 		while (token)
 		{
 			len = strlen(token) + 1;
@@ -40,7 +40,7 @@ char **cmdtoargv(char *line)
 			}
 			snprintf(argv[i], len, "%s", token);
 			i++;
-			token = strtok(NULL, delim);
+			token = custom_strtok(NULL, delim);
 		}
 		argv[i] = NULL;
 	}

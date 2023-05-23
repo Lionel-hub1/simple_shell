@@ -17,7 +17,7 @@ char *_which(const char *filename)
 	filepath = malloc(SIZE);
 	path = _getenv("PATH");
 	pathcp = strdup(path);
-	dir = strtok(pathcp, ":");
+	dir = custom_strtok(pathcp, ":");
 
 	while (dir)
 	{
@@ -27,7 +27,7 @@ char *_which(const char *filename)
 			free(pathcp);
 			return (filepath);
 		}
-		dir = strtok(NULL, ":");
+		dir = custom_strtok(NULL, ":");
 	}
 
 	free(filepath);

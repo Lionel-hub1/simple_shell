@@ -17,7 +17,7 @@ A shell is a command-line interface that allows users to interact with an operat
 
 ## Functions Explaination
 
-This code reads user input using `getline()` and tokenizes it using `strtok()`.
+This code reads user input using `getline()` and tokenizes it using `custom_trtok()`.
 
 It then creates a child process using `fork()` and executes the command using `execve()`.
 

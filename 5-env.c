@@ -15,15 +15,15 @@ char *_getenv(const char *name)
 	while (*envir)
 	{
 		str = strdup(*envir);
-		env = strtok(str, delim);
+		env = custom_strtok(str, delim);
 		while (env)
 		{
 			if (strncmp(name, env, nlen) == 0)
 			{
-				env = strtok(NULL, delim);
+				env = custom_strtok(NULL, delim);
 				return (env);
 			}
-			env = strtok(NULL, delim);
+			env = custom_strtok(NULL, delim);
 		}
 		free(str);
 		envir++;
@@ -45,11 +45,11 @@ void _printenv(void)
 	while (*envir)
 	{
 		envcp = strdup(*envir);
-		env = strtok(envcp, "\n");
+		env = custom_strtok(envcp, "\n");
 		while (env)
 		{
 			printf("%s\n", env);
-			env = strtok(NULL, "\n");
+			env = custom_strtok(NULL, "\n");
 		}
 		free(envcp);
 		envir++;
