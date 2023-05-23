@@ -10,6 +10,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <stdbool.h>
 
 #define SIZE 1024
 #define INITIAL_SIZE 10
