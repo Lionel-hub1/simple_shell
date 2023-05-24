@@ -48,7 +48,8 @@ void _printenv(void)
 		env = custom_strtok(envcp, "\n");
 		while (env)
 		{
-			printf("%s\n", env);
+			print_string(env);
+			print_string("\n");
 			env = custom_strtok(NULL, "\n");
 		}
 		free(envcp);

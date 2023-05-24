@@ -14,11 +14,11 @@ int main(void)
 
 	while (1)
 	{
-		printf("$ ");
+		print_string("$ ");
 		line_size = _getline(&line, &len, stdin);
 		if (line_size == -1)
 		{
-			printf("\n");
+			print_string("\n");
 			free(line);
 			exit_shell();
 		}

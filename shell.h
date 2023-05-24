@@ -11,9 +11,15 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <stdbool.h>
+#include <stdarg.h>
 
 #define SIZE 1024
 #define INITIAL_SIZE 10
+
+/* Printings */
+void print_string(char *str);
+int _putchar(char c);
+int custom_snprintf(char *str, size_t size, const char *format, ...);
 
 /* Getting line handler */
 ssize_t _getline(char **lineptr, size_t *n, FILE *stream);
