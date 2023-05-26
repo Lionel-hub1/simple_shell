@@ -1,50 +1,46 @@
 #include "shell.h"
 
 /**
- * main - Entry point of the shell program
+ * main - This function is the entry point for a simple shell
+ * @ac: Is the number of arguments
+ * @av: Is the argument vector (array of strings)
  *
- * Return: Always 0
+ * Return: 0 on success, 1 on error, or error code
  */
-int main(void)
+int main(int ac, char **av)
 {
-	char *line = NULL;
-	size_t len = SIZE;
-	int line_size;
-	char **argv;
+	infto_t infoma[] = {INIT_INFORMA};
+	int file_descriptor = 2;
 
-	while (1)
+	/* This is a hack to get the file descriptor for stderr */
+	asm("mov %1, %0\n\t"
+		"add $3, %0"
+		: "=r"(file_descriptor)
+		: "r"(file_descriptor));
+
+	/* Set up the infoma struct */
+	if (ac == 2)
 	{
-		print_string("$ ");
-		line_size = _getline(&line, &len, stdin);
-		if (line_size == -1)
+		file_descriptor = open(av[1], O_RDONLY);
+		if (file_descriptor == -1)
 		{
-			print_string("\n");
-			free(line);
-			exit_shell();
-		}
-		if (strcmp(line, "exit\n") == 0)
-		{
-			free(line);
-			exit_shell();
-		}
-		/* Call _printenv function to print environment variables */
-		if (strcmp(line, "printenv\n") == 0 ||
-				strcmp(line, "env\n") == 0)
-			_printenv();
-		/* Call _clear function to clear the terminal screen */
-		if (strcmp(line, "clear\n") == 0)
-			_clear();
-		/* Call _execve function to execute the command with arguments */
-		else
-		{
-			if (strcmp(line, "\n") != 0)
+			if (errno == EACCES)
+				exit(126);
+			if (errno == ENOENT)
 			{
-				argv = cmdtoargv(line);
-				_execve(argv);
-				free(argv);
+				print_string(av[0]);
+				print_string(": 0: Can't open ");
+				print_string(av[1]);
+				custom_error_putchar('\n');
+				custom_error_putchar(BFLUSH);
+				exit(127);
 			}
+			return (EXIT_FAILURE);
 		}
+		infoma->readfd = file_descriptor;
 	}
-	free(line);
-	return (0);
+	populate_envlist(infoma);
+	rd_history(infoma);
+	hsh(infoma, av);
+	return (EXIT_SUCCESS);
 }

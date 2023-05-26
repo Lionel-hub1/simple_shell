@@ -1,145 +1,58 @@
 #include "shell.h"
 
 /**
- * _getenv - is a function to find environment of a given name;
- * @name: is name to find it's value in environment;
+ * environ_printer - Prints the environment variables.
+ * @infoma: Pointer to the `infto_t` struct.
  *
- * Return: value(string) of a given environment name.
+ * Return: 0: Indicates successful execution.
  */
-char *_getenv(const char *name)
+int environ_printer(infto_t *infoma)
 {
-	size_t nlen = strlen(name);
-	char **envir = environ;
-	char *env, *str, *delim = "=";
-
-	while (*envir)
-	{
-		str = strdup(*envir);
-		env = custom_strtok(str, delim);
-		while (env)
-		{
-			if (strncmp(name, env, nlen) == 0)
-			{
-				env = custom_strtok(NULL, delim);
-				return (env);
-			}
-			env = custom_strtok(NULL, delim);
-		}
-		free(str);
-		envir++;
-	}
-
-	return (NULL);
-}
-
-/**
- * _printenv - is function to print environment;
- *
- * Return: type is void.
- */
-void _printenv(void)
-{
-	char *envcp, *env;
-	char **envir = environ;
-
-	while (*envir)
-	{
-		envcp = strdup(*envir);
-		env = custom_strtok(envcp, "\n");
-		while (env)
-		{
-			print_string(env);
-			print_string("\n");
-			env = custom_strtok(NULL, "\n");
-		}
-		free(envcp);
-		envir++;
-	}
-}
-
-/**
- * _setenv - is function to set environment variable;
- * @name: name of variable;
- * @value: value of a variable to be set;
- * @overwrite: if it is non zero have to overwrite existed variable;
- *
- * Return: value 0 for success otherwise -1.
- */
-int _setenv(const char *name, const char *value, int overwrite)
-{
-	char *envar = _getenv(name), *newvar;
-	size_t nlen = strlen(name), vlen = strlen(value);
-	size_t totlen = nlen + vlen + 2;
-
-	if (envar != NULL)
-	{
-		if (overwrite == 0)
-			return (0);
-
-		newvar = malloc(totlen);
-		if (newvar == NULL)
-		{
-			perror("malloc");
-			return (-1);
-		}
-		snprintf(newvar, totlen, "%s=%s", name, value);
-		if (putenv(newvar) != 0)
-		{
-			perror("putenv");
-			return (-1);
-		}
-	}
-	else
-	{
-		newvar = malloc(totlen);
-		if (newvar == NULL)
-		{
-			perror("malloc");
-			return (-1);
-		}
-		snprintf(newvar, totlen, "%s=%s", name, value);
-		if (putenv(newvar) != 0)
-		{
-			perror("putenv");
-			return (-1);
-		}
-	}
-
+	/* Print the linked list of environment variables */
+	print_linked_list(infoma->env);
 	return (0);
 }
 
 /**
- * _unsetenv - is function to unset or delete environment variable;
- * @name: name of variable;
+ * environ_getter - Retrieves the value of an environment variable.
+ * @infoma: Pointer to the `infto_t` struct.
+ * @name: Name of the environment variable to retrieve.
  *
- * Return: value 0 for success otherwise -1.
+ * Return:
+ *   - Pointer to the value of the environment variable if found.
+ *   - NULL if the environment variable is not found.
  */
-int _unsetenv(const char *name)
+char *environ_getter(infto_t *infoma, const char *name)
 {
-	char **current = environ, **nextvar;
-	char *envar = _getenv(name);
-	size_t nlen = strlen(name);
+	strl_t *list_node = infoma->env;
+	char *starter;
 
-	if (envar == NULL)
-		return (0);
-
-	while (*current)
+	while (list_node)
 	{
-		if (strncmp(*current, name, nlen) == 0 && (*current)[nlen] == '=')
-		{
-			nextvar = current + 1;
-			while (*nextvar != NULL)
-			{
-				*current = *nextvar;
-				++current;
-				++nextvar;
-			}
-			*current = NULL;
-			return (0);
-		}
-		++current;
+		/*Check if the node's string starts with the given name*/
+		starter = starts_with(list_node->str, name);
+		/*If starter is not null and the next character is not null as well*/
+		if (starter && *starter)
+			return (starter);		 /* Return the pointer */
+		list_node = list_node->next; /* Move to the next node */
 	}
+	return (NULL);
+}
 
-	perror("unset");
-	return (-1);
+/**
+ * populate_envlist - Populates the environment variable linked list.
+ * @infoma: Pointer to the `infto_t` struct.
+ *
+ * Return: Always returns 0 to indicate successful execution
+ */
+int populate_envlist(infto_t *infoma)
+{
+	strl_t *list_node = NULL;
+	size_t index;
+
+	/*Add each environment variable to the linked list*/
+	for (index = 0; environ[index]; index++)
+		end_addnode(&list_node, environ[index], 0);
+	infoma->env = list_node; /* Set the environment variable linked list */
+	return (0);
 }

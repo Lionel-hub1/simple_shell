@@ -1,80 +1,81 @@
 #include "shell.h"
 
 /**
- * _putchar - writes the character c to stdout
- * @c: The character to print
- *
- * Return: On success 1.
- * On error, -1 is returned, and errno is set appropriately.
- */
-int _putchar(char c)
-{
-	return (write(1, &c, 1));
-}
-
-/**
- * print_string - Prints a string to stdout.
- * @str: The string to be printed.
- *
+ * print_string - This function prints a string to standard output
+ * @str: The string to be printed
  * Return: void
  */
 void print_string(char *str)
 {
-	int i;
+	int index = 0;
 
 	if (!str)
 		return;
-
-	i = 0;
-	while (str[i] != '\0')
+	while (str[index] != '\0')
 	{
-		_putchar(str[i]);
-		i++;
+		custom_error_putchar(str[index]);
+		index++;
 	}
 }
 
 /**
- * custom_snprintf - Write formatted output to a string.
- * @str: Pointer to the destination string.
- * @size: The size of the destination string.
- * @format: The format string.
- * @...: The variadic arguments.
+ * print_linked_list - This function prints a linked list of strings
+ * @head: Is the pointer to the head of the linked list
  *
- * Return: The number of characters written (excluding the null byte used to
- * 	   end output to strings), or a negative value if an output error
- * 	   occurs.
+ * Return: The number of nodes in the linked list
  */
-int custom_snprintf(char *str, size_t size, const char *format, ...)
+size_t print_linked_list(const strl_t *head)
 {
-	int written = 0;
-	va_list args;
-	va_start(args, format);
+	size_t count = 0;
 
-	/* Check for NULL pointer or zero size */
-	if (str == NULL || size == 0)
+	while (head)
 	{
-		va_end(args);
-		return -1;
+		_puts(head->str ? head->str : "(nil)");
+		_puts("\n");
+		head = head->next;
+		count++;
 	}
+	return (count);
+}
 
-	/* Iterate over the format string */
-	for (; *format != '\0'; ++format)
+/**
+ * print_ls - This function prints a linked list of structures
+ * @head: Is a pointer to the head of the linked list
+ *
+ * Return: The number of nodes in the linked list
+ */
+size_t print_ls(const strl_t *head)
+{
+	size_t i = 0;
+
+	while (head)
 	{
-		/* Check if there is enough space in destination string */
-		if (written < (int)size - 1)
-		{
-			*str++ = *format;
-			++written;
-		}
-		else
-		{
-			break;
-		}
+		_puts(custom_itoa(head->num, 10, 0));
+		custom_putchar(':');
+		custom_putchar(' ');
+		_puts(head->str ? head->str : "(nil)");
+		_puts("\n");
+		head = head->next;
+		i++;
 	}
+	return (i);
+}
 
-	/* Null-terminate the destination string */
-	*str = '\0';
+/**
+ * _puts - This function prints a string to standard output
+ * @str: Is the sting to print
+ *
+ * Return: void
+ */
+void _puts(char *str)
+{
+	int index = 0;
 
-	va_end(args);
-	return written;
+	if (!str)
+		return;
+	while (str[index] != '\0')
+	{
+		custom_putchar(str[index]);
+		index++;
+	}
 }
